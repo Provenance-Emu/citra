@@ -70,11 +70,11 @@ if (CITRA_USE_PRECOMPILED_HEADERS)
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 endif()
 
-# if(NOT EXISTS ${PROJECT_SOURCE_DIR}/.git/hooks/pre-commit)
-#     message(STATUS "Copying pre-commit hook")
-#     file(COPY hooks/pre-commit
-#         DESTINATION ${PROJECT_SOURCE_DIR}/.git/hooks)
-# endif()
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/.git/hooks/pre-commit)
+    message(STATUS "Copying pre-commit hook")
+    file(COPY hooks/pre-commit
+        DESTINATION ${PROJECT_SOURCE_DIR}/.git/hooks)
+endif()
 
 # Use ccache for android if available
 # =======================================================================
@@ -269,9 +269,9 @@ endif()
 
 if (APPLE)
     # Umbrella framework for everything GUI-related
-    find_library(UIKIT_LIBRARY UIKit)
+    find_library(COCOA_LIBRARY Cocoa)
     find_library(AVFOUNDATION_LIBRARY AVFoundation)
-    set(PLATFORM_LIBRARIES ${UIKIT_LIBRARY} ${AVFOUNDATION_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
+    set(PLATFORM_LIBRARIES ${COCOA_LIBRARY} ${AVFOUNDATION_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
 elseif (WIN32)
     # WSAPoll and SHGetKnownFolderPath (AppData/Roaming) didn't exist before WinNT 6.x (Vista)
     add_definitions(-D_WIN32_WINNT=0x0601 -DWINVER=0x0601)
