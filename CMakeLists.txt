@@ -24,11 +24,11 @@ option(ENABLE_SDL2 "Enable the SDL2 frontend" ON)
 option(USE_SYSTEM_SDL2 "Use the system SDL2 lib (instead of the bundled one)" OFF)
 
 # Set bundled qt as dependent options.
-option(ENABLE_QT "Enable the Qt frontend" ON)
+option(ENABLE_QT "Enable the Qt frontend" OFF)
 option(ENABLE_QT_TRANSLATION "Enable translations for the Qt frontend" OFF)
 CMAKE_DEPENDENT_OPTION(CITRA_USE_BUNDLED_QT "Download bundled Qt binaries" ON "ENABLE_QT;MSVC" OFF)
 
-option(ENABLE_WEB_SERVICE "Enable web services (telemetry, etc.)" ON)
+option(ENABLE_WEB_SERVICE "Enable web services (telemetry, etc.)" OFF)
 
 option(ENABLE_CUBEB "Enables the cubeb audio backend" ON)
 
@@ -43,7 +43,7 @@ CMAKE_DEPENDENT_OPTION(CITRA_USE_BUNDLED_FFMPEG "Download bundled FFmpeg binarie
 
 option(USE_DISCORD_PRESENCE "Enables Discord Rich Presence" OFF)
 
-option(CITRA_USE_PRECOMPILED_HEADERS "Use precompiled headers" ON)
+option(CITRA_USE_PRECOMPILED_HEADERS "Use precompiled headers" OFF)
 
 CMAKE_DEPENDENT_OPTION(ENABLE_MF "Use Media Foundation decoder (preferred over FFmpeg)" ON "WIN32" OFF)
 
@@ -70,11 +70,11 @@ if (CITRA_USE_PRECOMPILED_HEADERS)
     set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/.git/hooks/pre-commit)
-    message(STATUS "Copying pre-commit hook")
-    file(COPY hooks/pre-commit
-        DESTINATION ${PROJECT_SOURCE_DIR}/.git/hooks)
-endif()
+# if(NOT EXISTS ${PROJECT_SOURCE_DIR}/.git/hooks/pre-commit)
+#     message(STATUS "Copying pre-commit hook")
+#     file(COPY hooks/pre-commit
+#         DESTINATION ${PROJECT_SOURCE_DIR}/.git/hooks)
+# endif()
 
 # Use ccache for android if available
 # =======================================================================
@@ -269,9 +269,9 @@ endif()
 
 if (APPLE)
     # Umbrella framework for everything GUI-related
-    find_library(COCOA_LIBRARY Cocoa)
+    find_library(UIKIT_LIBRARY UIKit)
     find_library(AVFOUNDATION_LIBRARY AVFoundation)
-    set(PLATFORM_LIBRARIES ${COCOA_LIBRARY} ${AVFOUNDATION_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
+    set(PLATFORM_LIBRARIES ${UIKIT_LIBRARY} ${AVFOUNDATION_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
 elseif (WIN32)
     # WSAPoll and SHGetKnownFolderPath (AppData/Roaming) didn't exist before WinNT 6.x (Vista)
     add_definitions(-D_WIN32_WINNT=0x0601 -DWINVER=0x0601)
