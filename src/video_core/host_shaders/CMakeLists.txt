@@ -22,10 +22,10 @@ set(SHADER_FILES
     vulkan_present_interlaced.frag
 )
 
-find_program(GLSLANGVALIDATOR "glslangValidator")
-if ("${GLSLANGVALIDATOR}" STREQUAL "GLSLANGVALIDATOR-NOTFOUND")
-    message(FATAL_ERROR "Required program `glslangValidator` not found.")
-endif()
+# find_program(GLSLANGVALIDATOR "glslangValidator")
+# if ("${GLSLANGVALIDATOR}" STREQUAL "GLSLANGVALIDATOR-NOTFOUND")
+#     message(FATAL_ERROR "Required program `glslangValidator` not found.")
+# endif()
 
 set(MACROS "-Dgl_VertexID=gl_VertexIndex")
 set(QUIET_FLAG "--quiet")

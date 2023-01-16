@@ -20,23 +20,23 @@ endif()
 
 option(ENABLE_LTO "Enable link time optimization" OFF)
 
-option(ENABLE_SDL2 "Enable the SDL2 frontend" ON)
+option(ENABLE_SDL2 "Enable the SDL2 frontend" OFF)
 option(USE_SYSTEM_SDL2 "Use the system SDL2 lib (instead of the bundled one)" OFF)
 
 # Set bundled qt as dependent options.
 option(ENABLE_QT "Enable the Qt frontend" OFF)
 option(ENABLE_QT_TRANSLATION "Enable translations for the Qt frontend" OFF)
-CMAKE_DEPENDENT_OPTION(CITRA_USE_BUNDLED_QT "Download bundled Qt binaries" ON "ENABLE_QT;MSVC" OFF)
+CMAKE_DEPENDENT_OPTION(CITRA_USE_BUNDLED_QT "Download bundled Qt binaries" OFF "ENABLE_QT;MSVC" OFF)
 
 option(ENABLE_WEB_SERVICE "Enable web services (telemetry, etc.)" OFF)
 
-option(ENABLE_CUBEB "Enables the cubeb audio backend" ON)
+option(ENABLE_CUBEB "Enables the cubeb audio backend" OFF)
 
 option(ENABLE_FFMPEG_AUDIO_DECODER "Enable FFmpeg audio (AAC) decoder" OFF)
 option(ENABLE_FFMPEG_VIDEO_DUMPER "Enable FFmpeg video dumper" OFF)
 
 if (ENABLE_FFMPEG_AUDIO_DECODER OR ENABLE_FFMPEG_VIDEO_DUMPER)
-    set(ENABLE_FFMPEG ON)
+    set(ENABLE_FFMPEG OFF)
 endif()
 
 CMAKE_DEPENDENT_OPTION(CITRA_USE_BUNDLED_FFMPEG "Download bundled FFmpeg binaries" ON "ENABLE_FFMPEG;MSVC" OFF)
@@ -153,19 +153,19 @@ function(detect_architecture symbol arch)
     endif()
 endfunction()
 
-if (NOT ENABLE_GENERIC)
-    if (MSVC)
-        detect_architecture("_M_AMD64" x86_64)
-        detect_architecture("_M_IX86" x86)
-        detect_architecture("_M_ARM" arm)
-        detect_architecture("_M_ARM64" arm64)
-    else()
-        detect_architecture("__x86_64__" x86_64)
-        detect_architecture("__i386__" x86)
-        detect_architecture("__arm__" arm)
+# if (NOT ENABLE_GENERIC)
+#     if (MSVC)
+#         detect_architecture("_M_AMD64" x86_64)
+#         detect_architecture("_M_IX86" x86)
+#         detect_architecture("_M_ARM" arm)
+#         detect_architecture("_M_ARM64" arm64)
+#     else()
+#         detect_architecture("__x86_64__" x86_64)
+#         detect_architecture("__i386__" x86)
+#         detect_architecture("__arm__" arm)
         detect_architecture("__aarch64__" arm64)
-    endif()
-endif()
+#     endif()
+# endif()
 if (NOT DEFINED ARCHITECTURE)
     set(ARCHITECTURE "GENERIC")
     set(ARCHITECTURE_GENERIC 1)
@@ -220,15 +220,15 @@ if (ENABLE_QT)
 endif()
 
 # Ensure libusb is properly configured (based on dolphin libusb include)
-if(NOT APPLE)
-    include(FindPkgConfig)
-    find_package(LibUSB)
-endif()
-if (NOT LIBUSB_FOUND)
+# if(NOT APPLE)
+#     include(FindPkgConfig)
+#     find_package(LibUSB)
+# endif()
+# if (NOT LIBUSB_FOUND)
     add_subdirectory(externals/libusb)
     set(LIBUSB_INCLUDE_DIR "")
     set(LIBUSB_LIBRARIES usb)
-endif()
+# endif()
 
 if (ENABLE_FFMPEG)
     if (CITRA_USE_BUNDLED_FFMPEG)
@@ -267,22 +267,11 @@ endif()
 # Platform-specific library requirements
 # ======================================
 
-if (APPLE)
+
     # Umbrella framework for everything GUI-related
-    find_library(COCOA_LIBRARY Cocoa)
+    find_library(COCOA_LIBRARY UIKit)
     find_library(AVFOUNDATION_LIBRARY AVFoundation)
     set(PLATFORM_LIBRARIES ${COCOA_LIBRARY} ${AVFOUNDATION_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY})
-elseif (WIN32)
-    # WSAPoll and SHGetKnownFolderPath (AppData/Roaming) didn't exist before WinNT 6.x (Vista)
-    add_definitions(-D_WIN32_WINNT=0x0601 -DWINVER=0x0601)
-    set(PLATFORM_LIBRARIES winmm ws2_32)
-    if (MINGW)
-        # PSAPI is the Process Status API
-        set(PLATFORM_LIBRARIES ${PLATFORM_LIBRARIES} psapi imm32 version)
-    endif()
-elseif (CMAKE_SYSTEM_NAME MATCHES "^(Linux|kFreeBSD|GNU|SunOS)$")
-    set(PLATFORM_LIBRARIES rt)
-endif()
 
 # Setup a custom clang-format target (if clang-format can be found) that will run
 # against all the src files. This should be used before making a pull request.
